@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjetoH_WebApi_DD_7194.Data;
 using ProjetoH_WebApi_DD_7194.Models;
@@ -13,6 +14,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
     {
         [HttpGet]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync();
@@ -23,6 +25,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Category>> GetById(int id, [FromServices] DataContext context)
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
@@ -34,6 +37,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
 
         [HttpPost]
         [Route("")]
+        [Authorize(Roles = "employee,manager")]
         public async Task<ActionResult<Category>> Post([FromBody] Category model, [FromServices] DataContext context)
         {
             if(!ModelState.IsValid)
@@ -55,6 +59,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult> Put(int id, [FromBody] Category model, [FromServices] DataContext context)
         {
             if (model.Id != id)
@@ -82,6 +87,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize(Roles = "manager")] 
         public async Task<ActionResult> Delete(int id, [FromServices] DataContext context)
         {
             var categoria = await context.Categories.FindAsync(id);

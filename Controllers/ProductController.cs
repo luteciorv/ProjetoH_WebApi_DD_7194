@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjetoH_WebApi_DD_7194.Data;
 using ProjetoH_WebApi_DD_7194.Models;
@@ -14,6 +15,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
     {
         [HttpGet]
         [Route("")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Product>>> Get([FromServices] DataContext context)
         {
             var products = await context.Products.Include(p => p.Category).AsNoTracking().ToListAsync();
@@ -24,6 +26,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Product>> GetById(int id, [FromServices] DataContext context)
         {
             var product = await context.Products.Include(p => p.Category).AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
@@ -34,6 +37,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
 
         [HttpGet]
         [Route("categories/{id:int}")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Product>>> GetByCategory(int id, [FromServices] DataContext context)
         {
             var products = await context.Products.Include(p => p.Category).AsTracking().Where(p => p.CategoryId == id).ToListAsync();
@@ -43,6 +47,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "employee,manager")]
         [Route("")]
         public async Task<ActionResult<Product>> Post([FromBody] Product product, [FromServices] DataContext context)
         {
