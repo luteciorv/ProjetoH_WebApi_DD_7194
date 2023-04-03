@@ -16,7 +16,7 @@ namespace ProjetoH_WebApi_DD_7194.Controllers
         public async Task<ActionResult<List<Category>>> Get([FromServices] DataContext context)
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync();
-            if(categories is null) return NotFound(new {message = "Nenhuma categoria cadastrada."});
+            if(categories.Count == 0) return NotFound(new {message = "Nenhuma categoria cadastrada."});
 
             return Ok(categories);
         }
