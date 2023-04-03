@@ -21,7 +21,7 @@ namespace ProjetoH_WebApi_DD_7194
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<DataContext>(opt => opt.UseInMemoryDatabase("Database"));
+            services.AddDbContext<DataContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
             services.AddScoped<DataContext, DataContext>();
         }
